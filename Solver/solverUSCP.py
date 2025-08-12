@@ -1,5 +1,7 @@
 import numpy as np
 import os
+from Metaheuristics.DOA import iterarDOA
+from Metaheuristics.WSO import iterarWSO
 from Problem.USCP.problem import USCP
 from Metaheuristics.GWO import iterarGWO
 from Metaheuristics.SCA import iterarSCA
@@ -33,7 +35,7 @@ def solverUSCP(id, mh, maxIter, pop, instances, DS, repairType, param):
     pBestScore = None
     pBest = None
     
-    if mh == 'PSO':
+    if mh == 'PSO' or mh == 'WSO':
         vel = np.zeros((pop, instance.getColumns()))
         pBestScore = np.zeros(pop)
         pBestScore.fill(float("inf"))
@@ -59,7 +61,7 @@ def solverUSCP(id, mh, maxIter, pop, instances, DS, repairType, param):
             
 
         fitness[i] = instance.fitness(population[i])
-        if mh == 'PSO':
+        if mh == 'PSO' or mh == 'WSO':
             if pBestScore[i] > fitness[i]:
                 pBestScore[i] = fitness[i]
                 pBest[i, :] = population[i, :].copy()
@@ -110,7 +112,10 @@ def solverUSCP(id, mh, maxIter, pop, instances, DS, repairType, param):
             population = iterarWOA(maxIter, iter, instance.getColumns(), population.tolist(), best.tolist())
         if mh == 'PSO':
             population, vel = iterarPSO(maxIter, iter, instance.getColumns(), population.tolist(), best.tolist(), pBest.tolist(), vel, 1)
-        
+        if mh == 'WSO':
+            population, vel = iterarWSO(maxIter, iter, instance.getColumns(), pop, population, best, None, None, vel, pBest)
+        if mh == 'DOA':
+            population = iterarDOA(maxIter, iter, instance.getColumns(), population, best, 'MIN') 
         # Binarizo, calculo de factibilidad de cada individuo y calculo del fitness
         for i in range(population.__len__()):
 
@@ -125,7 +130,7 @@ def solverUSCP(id, mh, maxIter, pop, instances, DS, repairType, param):
 
             fitness[i] = instance.fitness(population[i])
 
-            if mh == 'PSO':
+            if mh == 'PSO' or mh == 'WSO':
                 if fitness[i] < pBestScore[i]:
                     pBest[i] = np.copy(population[i])
 

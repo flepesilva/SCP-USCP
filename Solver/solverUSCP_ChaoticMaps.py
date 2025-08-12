@@ -1,3 +1,5 @@
+from Metaheuristics.DOA import iterarDOA
+from Metaheuristics.WSO import iterarWSO
 import numpy as np
 import os
 import time
@@ -59,7 +61,7 @@ def solverUSCP_ChaoticMaps(id, mh, maxIter, pop, instances, DS, repairType, para
     pBestScore = None
     pBest = None
     
-    if mh == 'PSO':
+    if mh == 'PSO' or mh == 'WSO':
         vel = np.zeros((pop, instance.getColumns()))
         pBestScore = np.zeros(pop)
         pBestScore.fill(float("inf"))
@@ -84,7 +86,7 @@ def solverUSCP_ChaoticMaps(id, mh, maxIter, pop, instances, DS, repairType, para
             population[i] = instance.repair(population[i], repairType)
             
         fitness[i] = instance.fitness(population[i])
-        if mh == 'PSO':
+        if mh == 'PSO' or mh == 'WSO':
             if pBestScore[i] > fitness[i]:
                 pBestScore[i] = fitness[i]
                 pBest[i, :] = population[i, :].copy()
@@ -135,7 +137,10 @@ def solverUSCP_ChaoticMaps(id, mh, maxIter, pop, instances, DS, repairType, para
             population = iterarWOA(maxIter, iter, instance.getColumns(), population.tolist(), best.tolist())
         if mh == 'PSO':
             population, vel = iterarPSO(maxIter, iter, instance.getColumns(), population.tolist(), best.tolist(), pBest.tolist(), vel, 1)
-        
+        if mh == 'WSO':
+            population, vel = iterarWSO(maxIter, iter, instance.getColumns(), pop, population, best, None, None, vel, pBest)
+        if mh == 'DOA':
+            population = iterarDOA(maxIter, iter, instance.getColumns(), population, best, 'MIN')  
         # Binarizo, calculo de factibilidad de cada individuo y calculo del fitness
         for i in range(population.__len__()):
 
@@ -150,7 +155,7 @@ def solverUSCP_ChaoticMaps(id, mh, maxIter, pop, instances, DS, repairType, para
 
             fitness[i] = instance.fitness(population[i])
 
-            if mh == 'PSO':
+            if mh == 'PSO' or mh == 'WSO':
                 if fitness[i] < pBestScore[i]:
                     pBest[i] = np.copy(population[i])
 

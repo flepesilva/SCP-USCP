@@ -1,5 +1,7 @@
 import numpy as np
 import os
+from Metaheuristics.DOA import iterarDOA
+from Metaheuristics.WSO import iterarWSO
 from Problem.SCP.problem import SCP
 from Metaheuristics.GWO import iterarGWO
 from Metaheuristics.SCA import iterarSCA
@@ -33,7 +35,7 @@ def solverSCP(id, mh, maxIter, pop, instancia, DS, repairType, param):
     pBestScore = None
     pBest = None
     
-    if mh == 'PSO':
+    if mh == 'PSO' or mh == 'WSO':
         vel = np.zeros((pop, instance.getColumns()))
         pBestScore = np.zeros(pop)
         pBestScore.fill(float("inf"))
@@ -59,7 +61,7 @@ def solverSCP(id, mh, maxIter, pop, instancia, DS, repairType, param):
             
 
         fitness[i] = instance.fitness(poblacion[i])
-        if mh == 'PSO':
+        if mh == 'PSO' or mh == 'WSO':
             if pBestScore[i] > fitness[i]:
                 pBestScore[i] = fitness[i]
                 pBest[i, :] = poblacion[i, :].copy()
@@ -105,7 +107,10 @@ def solverSCP(id, mh, maxIter, pop, instancia, DS, repairType, param):
             poblacion = iterarWOA(maxIter, iter, instance.getColumns(), poblacion.tolist(), Best.tolist())
         if mh == 'PSO':
             poblacion, vel = iterarPSO(maxIter, iter, instance.getColumns(), poblacion.tolist(), Best.tolist(), pBest.tolist(), vel, 1)
-        
+        if mh == 'WSO':
+            poblacion, vel = iterarWSO(maxIter, iter, instance.getColumns(), pop, poblacion, Best, None, None, vel, pBest)
+        if mh == 'DOA':
+            population = iterarDOA(maxIter, iter, instance.getColumns(), population, Best, 'MIN') 
         # Binarizo, calculo de factibilidad de cada individuo y calculo del fitness
         for i in range(poblacion.__len__()):
 
@@ -120,7 +125,7 @@ def solverSCP(id, mh, maxIter, pop, instancia, DS, repairType, param):
 
             fitness[i] = instance.fitness(poblacion[i])
             
-            if mh == 'PSO':
+            if mh == 'PSO' or mh == 'WSO':
                 if fitness[i] < pBestScore[i]:
                     pBest[i] = np.copy(poblacion[i])
 

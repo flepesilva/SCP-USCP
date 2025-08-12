@@ -4,7 +4,7 @@ import json
 bd = BD()
 scp     = False
 uscp    = True
-mhs = ['WOA']
+mhs = ['DOA']
 cantidad = 0
 
 DS_actions = [
@@ -52,7 +52,7 @@ if uscp:
     for instancia in instancias:
 
         for mh in mhs:
-            binarizaciones = ['V3-STD','V3-STD_LOG']
+            binarizaciones = ['V3-STD','V3-STD_LOG', 'V3-ELIT_LOG', 'V3-ELIT_CIRCLE']
             for binarizacion in binarizaciones:
                 
                 data = {}
