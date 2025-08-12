@@ -44,15 +44,16 @@ if uscp:
     # u48		u58		ua4		uc4		cyc10	unre4	unrg4	
     # u49		u59		ua5		uc5		cyc11	unre5	unrg5	
     instancias = bd.obtenerInstancias(f'''
-                                      "cyc06"
+                                      "clr10", "clr11", "clr12", "clr13",
+                                      "cyc06", "cyc07", "cyc08", "cyc09", "cyc10", "cyc11"
                                       ''')
-    iteraciones = 100
+    iteraciones = 20
     experimentos = 1
-    poblacion = 10
+    poblacion = 5
     for instancia in instancias:
 
         for mh in mhs:
-            binarizaciones = ['V3-STD','V3-STD_LOG', 'V3-ELIT_LOG', 'V3-ELIT_CIRCLE']
+            binarizaciones = ['V3-STD', 'V3-STD_LOG']
             for binarizacion in binarizaciones:
                 
                 data = {}
